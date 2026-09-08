@@ -1,5 +1,4 @@
-# Preview exclusion. At public launch replace the Disallow line with:
-#   Allow: /
-#   Sitemap: https://boringmortgage.com/sitemap.xml
 User-agent: *
-Disallow: /
+Allow: /
+
+Sitemap: https://www.boringmortgage.com/sitemap.xml
