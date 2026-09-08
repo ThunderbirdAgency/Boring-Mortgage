@@ -8,6 +8,14 @@ Continue the existing Boring Mortgage website for Erik Miller / Patriot Home Mor
 
 The latest task was to push all work to Git and prepare this handoff. It did not authorize a new public-domain cutover. Verify current hosting and domain state before proposing a launch.
 
+## LAUNCHED September 8, 2026
+
+The site is live at https://www.boringmortgage.com and open to search engines. Vercel serves it
+from the GitHub repository; the apex redirects to www; robots.txt allows crawling; the old
+GoHighLevel URLs redirect into the new site. See FINISH-LAUNCH.md for the verification table and
+the remaining non-code items (Patriot compliance sign-off, Erik's visual approval, the unanswered
+GoHighLevel integration question).
+
 ## September 8 status: browser QA done, launch prep in place, no cutover
 
 Work continued in Claude Code on the web from the Git bundle. Every item below was verified in headless Chromium (Playwright 1.56) against a local `python3 -m http.server` serving `dist/`. Screenshots and the findings log are produced by `scripts/browser-qa.js` into `qa-output/` (ignored by Git).

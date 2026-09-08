@@ -43,7 +43,9 @@ async function labelClipCheck(page, label) {
 }
 
 (async () => {
-  const browser = await chromium.launch();
+  // QA_PROXY (or HTTPS_PROXY) lets this run against a remote host from a sandboxed network.
+  const proxy = process.env.QA_PROXY || (BASE.startsWith('http') && !BASE.includes('127.0.0.1') ? process.env.HTTPS_PROXY : null);
+  const browser = await chromium.launch(proxy ? { proxy: { server: proxy }, args: ['--ignore-certificate-errors'] } : {});
   const pages = ['/', '/buy/', '/refinance/', '/double_checker/', '/schedule-a-call/', '/privacy/', '/404.html'];
   const viewports = [[320, 640], [390, 844], [768, 1024], [1440, 900], [1920, 1080]];
 

@@ -5,35 +5,51 @@ Read this first. It is the only document you need to finish the project.
 
 ---
 
-## The one thing that is broken right now
+## Status: LIVE as of September 8, 2026, 19:30 UTC
 
-**boringmortgage.com is down.** It returns `DEPLOYMENT_NOT_FOUND` from Vercel and has no SSL certificate.
+The site is published at **https://www.boringmortgage.com** and open to search engines.
 
-Why: DNS was pointed at Vercel, but the domain was never added inside the Vercel project. Vercel
-receives the traffic and does not know which project it belongs to, so it refuses it.
+What was done to finish it:
 
-Confirmed state as of this writing:
+- Erik added both domains in the Vercel dashboard. The certificate issued and the site came up.
+- Vercel is configured with **www as the primary host**: `boringmortgage.com` 308-redirects to
+  `www.boringmortgage.com`, and `http://` redirects to `https://`. Canonical tags, Open Graph URLs,
+  and `sitemap.xml` were changed from the apex to `www` so every signal points at the host that
+  actually serves. If you prefer the bare apex, set it as the primary domain in Vercel and change
+  those URLs back in the same commit; do not leave the two disagreeing.
+- `dist/robots.txt` switched from a blanket `Disallow: /` to `Allow: /` plus the sitemap line.
+
+Verified on the live domain:
 
 | Check | Result |
 | --- | --- |
-| `boringmortgage.com` A record | `76.76.21.21` (Vercel) |
-| `www.boringmortgage.com` CNAME | `cname.vercel-dns.com` (Vercel) |
-| `http://boringmortgage.com/` | 404, header `x-vercel-error: DEPLOYMENT_NOT_FOUND` |
-| `https://boringmortgage.com/` | TLS handshake fails, no certificate issued |
-| Vercel project `boring-mortgage` domains | only the three `*.vercel.app` names |
+| Six public routes | 200, correct content types |
+| Served HTML vs repo `dist/` | byte-identical on all six pages |
+| `sitemap.xml`, `robots.txt`, `favicon.svg` | 200, correct types, robots allows crawling |
+| Old GoHighLevel URLs `/home`, `/home-7750` | land on the homepage |
+| Old `/conventional-loan`, `/fha-loans`, `/va-loans` | land on the loan options section |
+| Unknown path | real 404 status, branded "A small detour." page |
+| Security headers | HSTS, nosniff, DENY, referrer policy, permissions policy all present |
+| Asset caching | one year immutable on `/assets/`, revalidate on HTML |
+| Full browser suite on the committed build | zero findings |
 
-**The fix is in the Vercel dashboard and takes about a minute.** A human has to click it; the
-Vercel MCP tools available to Claude do not include domain management.
+The browser suite could not be pointed at the live domain from the sandboxed session, because the
+agent proxy drops Chromium's tunnel. That is a sandbox limitation, not a site problem: curl reaches
+the site fine, and the served HTML is byte-identical to the build that passed the suite. From a
+normal machine you can run it directly:
 
-1. Go to https://vercel.com/thunderbird-agency/boring-mortgage/settings/domains
-2. Add `boringmortgage.com`.
-3. Add `www.boringmortgage.com` and set it to redirect to `boringmortgage.com`.
-4. Vercel detects the DNS records that are already correct and issues the certificate, usually
-   within a few minutes.
+```sh
+QA_BASE=https://www.boringmortgage.com NODE_PATH=$(npm root -g) node scripts/browser-qa.js
+```
 
-**Rollback if you would rather put the old site back first:** in GoDaddy DNS, set the A record for
-`@` back to `162.159.140.166` and the `www` CNAME back to `sites.ludicrous.cloud`. The old
-GoHighLevel site is still published and untouched, so it returns immediately.
+### What is left
+
+Nothing blocking. These are open questions for Erik and Patriot, not code:
+
+1. **Patriot compliance sign-off** on the footer identity and the testimonials. See below.
+2. **Erik's visual approval** of the headline and layout.
+3. **The GoHighLevel question**, still unanswered. See below.
+4. Optional: submit the sitemap in Google Search Console now that crawling is allowed.
 
 ---
 
@@ -60,8 +76,8 @@ three pulp-style disaster illustrations (tiger, meteor, cyclist), deadpan humor.
 | `source-assets/` | Full-resolution originals and retired hero video. Tracked, never published |
 | `dist/_headers`, `dist/_redirects` | Netlify / Cloudflare Pages config. Inert on Vercel |
 | `vercel.json` | Live config on Vercel: output dir, headers, redirects, trailing slash |
-| `dist/robots.txt` | **Still blocks all crawlers.** See "Flip robots.txt" below |
-| `dist/sitemap.xml` | Six public routes, absolute URLs on boringmortgage.com |
+| `dist/robots.txt` | Allows crawling, references the sitemap |
+| `dist/sitemap.xml` | Six public routes, absolute URLs on www.boringmortgage.com |
 | `scripts/check-flow.cjs` | Mocked-DOM regression test, 27 answer combinations |
 | `scripts/browser-qa.js` | Playwright QA: viewports, overflow, flow, showcase, keyboard, touch, links |
 | `scripts/optimize-images.js` | Regenerates `dist/assets/` variants from `source-assets/` |
@@ -105,73 +121,51 @@ Do not redo this from scratch. Re-run `scripts/browser-qa.js` only after you cha
 
 ## Your job, in order
 
-### 1. Get the domain live
+### 1. Confirm the site is still healthy
 
-Do the Vercel Domains step above, or tell Erik to. Then verify:
+Done on September 8, but re-check after any change:
 
 ```sh
-curl -sS -o /dev/null -D - https://boringmortgage.com/ | head -20
-curl -sS https://boringmortgage.com/ | grep -o '<title>[^<]*</title>'
+curl -sS -o /dev/null -D - https://www.boringmortgage.com/ | head -20
+curl -sS https://www.boringmortgage.com/ | grep -o '<title>[^<]*</title>'
 ```
 
 You want a 200, an `x-vercel-id` header, and the title
 `Boring Mortgage | Exciting home. Boring mortgage. Erik Miller, Patriot Home Mortgage`.
-If you still see `x-vercel-error: DEPLOYMENT_NOT_FOUND`, the domain is not attached yet. Stop and
-say so rather than changing code.
 
-### 2. Flip robots.txt
-
-Only after the domain serves the new site. `dist/robots.txt` currently reads:
-
-```
-User-agent: *
-Disallow: /
-```
-
-Replace the `Disallow` line so the file becomes:
-
-```
-User-agent: *
-Allow: /
-Sitemap: https://boringmortgage.com/sitemap.xml
-```
-
-Commit and push. Vercel redeploys on its own. This is the single switch that makes the site
-indexable, so do not do it before the domain is confirmed working.
-
-### 3. Verify the live domain end to end
+### 2. Verify the live domain end to end
 
 ```sh
 # every route
 for p in / /buy/ /refinance/ /double_checker/ /schedule-a-call/ /privacy/ /sitemap.xml /robots.txt; do
-  printf '%-22s ' "$p"; curl -sS -o /dev/null -w '%{http_code}\n' "https://boringmortgage.com$p"
+  printf '%-22s ' "$p"; curl -sS -o /dev/null -w '%{http_code}\n' "https://www.boringmortgage.com$p"
 done
 
 # www to apex, http to https
-curl -sS -o /dev/null -D - https://www.boringmortgage.com/ | grep -i '^location'
-curl -sS -o /dev/null -D - http://boringmortgage.com/   | grep -i '^location'
+curl -sS -o /dev/null -D - https://boringmortgage.com/     | grep -i '^location'   # apex -> www
+curl -sS -o /dev/null -D - http://www.boringmortgage.com/ | grep -i '^location'   # http -> https
 
 # old GoHighLevel URLs must land on the new site
 for p in /home /home-7750 /conventional-loan /fha-loans /va-loans; do
-  printf '%-20s ' "$p"; curl -sS -L -o /dev/null -w '%{url_effective}\n' "https://boringmortgage.com$p"
+  printf '%-20s ' "$p"; curl -sS -L -o /dev/null -w '%{url_effective}\n' "https://www.boringmortgage.com$p"
 done
 
 # security headers
-curl -sS -o /dev/null -D - https://boringmortgage.com/ | grep -iE 'strict-transport|x-content-type|x-frame|referrer|permissions'
+curl -sS -o /dev/null -D - https://www.boringmortgage.com/ | grep -iE 'strict-transport|x-content-type|x-frame|referrer|permissions'
 
 # branded 404 with a real 404 status
-curl -sS -o /dev/null -w '%{http_code}\n' https://boringmortgage.com/definitely-not-a-page/
+curl -sS -o /dev/null -w '%{http_code}\n' https://www.boringmortgage.com/definitely-not-a-page/
 ```
 
 Then run the browser QA against the live domain:
 
 ```sh
-QA_BASE=https://boringmortgage.com NODE_PATH=$(npm root -g) node scripts/browser-qa.js
+QA_BASE=https://www.boringmortgage.com NODE_PATH=$(npm root -g) node scripts/browser-qa.js
 ```
 
 Findings and screenshots land in `qa-output/`, which is gitignored.
 
-### 4. Report, do not guess
+### 3. Report, do not guess
 
 Tell Erik what passed and what did not, with the actual output. If something fails, fix the
 smallest thing that fixes it. Do not redesign anything.
