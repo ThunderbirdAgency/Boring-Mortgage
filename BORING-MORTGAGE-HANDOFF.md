@@ -1,65 +1,125 @@
-# Boring Mortgage — desktop handoff
+# Boring Mortgage — Claude Code handoff
 
-Updated September 6, 2026. This file describes the playful interactive revision after version 2.
+Updated September 7, 2026. This supersedes the earlier desktop handoff.
 
-## Resume instruction
+## Start here
 
-Continue the existing Boring Mortgage project. Preserve the Patriot Home Mortgage identity and the user's intentionally exaggerated, deadpan humor. The concept is that exciting can be terrible: a tiger fight, an approaching meteor, or a bicycle losing its front wheel. Finish browser QA and the public-domain launch; do not rebuild from scratch or generate more assets without a concrete need.
+Continue the existing Boring Mortgage website for Erik Miller / Patriot Home Mortgage. Preserve the navy/scarlet visual identity, exaggerated disaster illustrations, and deadpan humor. The premise is “exciting homes, uneventful financing.” Finish browser testing and remaining launch work from the existing implementation rather than rebuilding from scratch.
 
-## Project and saved source
+The latest task was to push all work to Git and prepare this handoff. It did not authorize a new public-domain cutover. Verify current hosting and domain state before proposing a launch.
 
-- Private preview: https://boring-mortgage.thunderbird-8781.chatgpt.site
-- Existing Sites project ID: `appgprj_6a9c7147b5548191b92ebcb0c894926d`
-- Local checkout if still present: `/workspace/sites/boring-mortgage`
-- Git source: `https://git.chatgpt-team.site/6edf54e4-cd41-409e-9310-24a1878ba3f5/appgprj_6a9c7147b5548191b92ebcb0c894926d.git`
-- Branch: `main`. This is the Sites-backed Git repository, NOT a verified user GitHub repository.
-- GitHub search for `boring` returned no accessible matching repository. Obtain the exact GitHub owner/repository URL before transferring. Do not invent a repo or claim GitHub is synced.
-- If local checkout is gone: use Sites get_site and create_source_repository_write_credential for the exact project above, then clone the returned URL and branch with per-command authentication. Never create a replacement Site or save a token to files.
+## Open in Claude Code
 
-## Stack
+On Erik’s current Mac, open this existing Git checkout:
 
-Portable static HTML/CSS/JavaScript; serve `dist`. No dependencies or build step. `.openai/hosting.json` contains the identity and `static.directory=dist`. Hosting package helper handles archives. Read Sites skills before lifecycle actions.
+```sh
+cd /Users/emiller/Documents/Codex/2026-09-06/this-part-of-the-website-needs/work/boring-mortgage
+claude
+```
 
-## What is implemented
+Then ask Claude: “Read BORING-MORTGAGE-HANDOFF.md, inspect the existing source, run the checks, and finish browser QA and remaining website work. Preserve the current design and humor. Check available account access before asking me for setup. Never ask me to paste secrets. Report specific launch blockers.”
 
-- Interactive bad-excitement hero: three custom pulp-style illustrations (tiger, meteor, detached bicycle wheel). Clickable scene selectors, crossfades, gentle image motion, pause/play, arrow-key controls, reduced-motion support, offscreen and background-tab pausing.
-- Original grass video is retained as an unused asset, no longer the hero.
-- Three-question mortgage check-in (goal, timing, concern), native required choices, tailored result, a practical question to ask Erik, appropriate route CTA, and change-answer control. No personal data collection, no network submission or persistence.
-- Humorous campaign copy across homepage and buying/refinance/second-opinion/contact pages.
-- Original yawning collage restored.
-- Four original customer testimonial excerpts retained without invented stars, counts, or guarantees.
-- Conventional, FHA, VA, USDA, jumbo, refinance information and Patriot links retained.
-- Phone, email, and secure application actions work as links. There is no fake submission-success form or backend lead database.
+A portable source ZIP is supplied alongside the downloadable handoff. It includes every tracked source file and asset, including `.openai/hosting.json`, but no credentials or `.git` directory. Extract it if using another computer. A Git bundle is also supplied to preserve the complete committed history; restore it with `git clone boring-mortgage.bundle boring-mortgage`. That clone’s origin is the local bundle, so configure an authenticated writable remote before future pushes.
 
-## Important files
+## Repository and publication
 
-- `dist/index.html`: homepage, review excerpts, loan programs, check-in markup.
-- `dist/style.css`: original styles plus campaign revisions; consider careful consolidation after visual approval.
-- `dist/motion.js`: showcase and check-in interactions.
-- `dist/assets/exciting-{tiger,meteor,bicycle}.png`: new generated illustrations, 1536x1024.
-- `dist/assets/yawning-original.jpg`: original collage.
-- Routes: `/buy/`, `/refinance/`, `/double_checker/`, `/schedule-a-call/`, `/privacy/`.
-- `ASSET-SOURCES.md`: asset provenance and initial video details.
+- Existing Git origin: https://git.chatgpt-team.site/6edf54e4-cd41-409e-9310-24a1878ba3f5/appgprj_6a9c7147b5548191b92ebcb0c894926d.git
+- Branch: `main`.
+- This is the Sites-managed Git repository, not a GitHub repository. A September 7 search under ThunderbirdAgency found no matching “boring” repository. An exact separate GitHub destination remains unverified. Do not invent one or claim GitHub synchronization.
+- Current private publication: https://boring-mortgage.thunderbird-8781.chatgpt.site/#check-in
+- Sites project: `appgprj_6a9c7147b5548191b92ebcb0c894926d`.
+- Latest published version: 4. Implementation commit: `75182b518cca6f032b9378eafbfd2b43901b15dd`.
+- This handoff and retained test script are a later documentation commit; there is no new website deployment for the handoff.
+- Sites Git authentication uses short-lived, repository-scoped credentials obtained through the Sites connector. They are deliberately not stored here. Claude Code does not automatically inherit Codex connectors or authentication. The local checkout, source ZIP, and Git bundle let you work without those credentials.
+- Public BoringMortgage.com was not changed by this task or the prior check-in revision. Its current external configuration has not been audited in this handoff task.
 
-## Patriot details
+## Run locally
 
-Erik Miller, NMLS 263103. Phone 623-696-8683. Email erik.miller@patriothomemortgage.com.
-Company: Belem Servicing LLC, dba Patriot Home Mortgage; company NMLS 715386.
-Verified reference: https://patriothomemortgage.com/mortgage-officer/erik-miller/
-Application: https://myloan.patriothomemortgage.com/homehub/signup/erik.miller@patriothomemortgage.com
-Program reference: https://patriothomemortgage.com/loan-options/
-Keep the lender's required disclosures. No promises of guaranteed approval, savings, or absolutely surprise-free closings.
+This is plain static HTML/CSS/JavaScript. There is no package.json, package install, framework, database, or build command. `dist/` is the editable source and publish directory, not disposable generated output.
 
-## Validation and remaining launch work
+```sh
+python3 -m http.server 8765 --bind 127.0.0.1 --directory dist
+```
 
-- JavaScript syntax and local links/assets checked. Art inspected.
-- Browser end-to-end and mobile visual QA NOT performed. Verify all three scene choices, pause/play, reduced motion, keyboard operation, required fields, result combinations, edit answers, layout at 390/768/1440px, and external CTA destinations.
-- Existing public BoringMortgage.com was not changed. Domain hosting/DNS and intended GitHub repo remain unconnected.
-- User has requested launch. Private preview can be published from this chat; a public custom-domain cutover still needs verified destination/hosting access.
-- Before public indexing: remove `Disallow: /` from robots.txt, add actual production canonical URLs and sitemap, check route redirects from old URLs, verify security headers on final host, and confirm Patriot advertising disclosures.
-- Lead tracking, CRM routing, calendar booking, and document upload are NOT configured. Phone/email and official Patriot secure application are the current conversion path. Do not add sensitive document collection to this static site.
-- A previous booking calendar was broken. Contact actions replace it until an approved working scheduling link is available.
+Open http://127.0.0.1:8765/#check-in in a browser. Use an HTTP server because links and asset paths are root-relative; do not open the HTML through file://.
 
-## Asset generation notes
+With Node.js available:
 
-Three new built-in image generations: premium retro pulp editorial paintings, rich navy/scarlet/golden light, exaggerated comic peril, no text, no gore. Subjects: office worker confronting tiger; meteor approaching Earth; helmeted cyclist with detached front wheel. No new video generation for this revision.
+```sh
+node --check dist/motion.js
+node scripts/check-flow.cjs
+git diff --check
+```
+
+The check-flow script uses a lightweight mocked DOM. It covers all 27 goal/timing/concern combinations, missing answers, Back, preserved selections, route results, and changing answers. It does not verify real browser validation bubbles, rendered layout, focus behavior, or accessibility.
+
+## Latest change: compact check-in
+
+The old section displayed all questions in a long white form beside a mostly empty navy column. Version 4 replaces this with one question at a time, a progress indicator, explicit Continue/Back controls, and a final “Show my next step” action. Choices remain selected when revisiting a step or editing the result. The heading is “Let’s make this less exciting.” Supporting copy says “Three quick questions. One clear next step. No email ambush. No commitment.”
+
+- Goals: buy a home, review current mortgage, double-check an offer.
+- Timing: soon, a few months, just looking.
+- Concerns: monthly payment, cash required, unexplained details.
+- Each result combines goal-specific copy and route, timing guidance, and a suggested question for Erik.
+- Answers live only in the page; there is no network submission or persistence.
+- Radio inputs retain native required validation, with step navigation and focus handling in JavaScript.
+- JavaScript-disabled visitors see a contact fallback.
+- Mobile styles stack the intro above the panel. Real browser/mobile verification remains outstanding.
+
+## Files and routes
+
+| File | Purpose |
+| --- | --- |
+| `dist/index.html` | Homepage, disaster showcase, check-in, programs, testimonials, FAQ, disclosures |
+| `dist/style.css` | Shared CSS and campaign layers; compact check-in block near the end |
+| `dist/motion.js` | Disaster showcase controller, then check-in controller |
+| `dist/assets/` | All images, original assets, and retained unused grass video |
+| `dist/buy/index.html` | Buying page |
+| `dist/refinance/index.html` | Mortgage review/refinance page |
+| `dist/double_checker/index.html` | Second-opinion page |
+| `dist/schedule-a-call/index.html` | Contact actions; no active booking calendar |
+| `dist/privacy/index.html` | Site privacy information |
+| `dist/404.html` | Not-found page |
+| `dist/_headers` | Intended static-host security headers; verify host support |
+| `dist/robots.txt` | Preview indexing exclusion: Disallow: / |
+| `.openai/hosting.json` | Existing Sites identity and static directory |
+| `scripts/check-flow.cjs` | Repeatable check-in logic regression checks |
+| `ASSET-SOURCES.md` | Asset provenance |
+
+Much of the original HTML/CSS/JavaScript is compressed into long lines. Reformat carefully before larger edits if helpful; preserve behavior and verify the result. Do not delete `dist/` or run a scaffold over this project.
+
+## Existing experience to preserve
+
+Three selectable pulp-style disaster illustrations: tiger, meteor, and cyclist losing the front wheel. The showcase has pause/play, arrow keys, crossfades, image motion, reduced-motion handling, and pausing when offscreen or in a background tab. Original yawning collage and four customer testimonial excerpts remain. Loan program information includes conventional, FHA, VA, USDA, jumbo, and refinancing. There are no invented star ratings, guaranteed savings, or guaranteed approvals.
+
+Phone/email and Patriot’s secure application are the current conversion paths. No CRM, lead database, document upload, analytics integration, or functioning booking calendar is configured. Do not imply these are operational or add sensitive document collection to this static marketing site.
+
+## Next work, in order
+
+1. Serve locally and run browser QA at 390, 768, and 1440 pixels, plus narrow screens and 200% text enlargement. Check overflow, full choice labels, button visibility, and the result panel. Use keyboard-only navigation and confirm focus remains understandable after step/result changes.
+2. Exercise all showcase controls, pause/play, reduced motion, background/offscreen behavior, and touch use. Check check-in validation, Back, changing answers, Enter submission, and appropriate result destinations in a real browser. The mock checks are not end-to-end browser evidence.
+3. Review every route, image, anchor, phone link, email link, and external application destination. Verify actual application routing with Patriot without submitting fake borrower applications or private financial information.
+4. Resolve any visible issues while retaining the current campaign identity. The latest headline/layout has not received explicit visual approval from Erik.
+5. Identify the exact intended GitHub repository if a transfer is still wanted. Preserve existing history and destination content; never force-push over unrelated work. The current Sites origin can remain as a separate remote.
+6. Inspect current hosting/DNS for BoringMortgage.com and prepare a concrete launch and rollback plan. Recheck SSL, apex/www behavior, old URL redirects, 404 handling, and security headers on the chosen host. This static site can be served by a static host using `dist/`; no framework migration is required.
+7. Before public indexing, add final production canonical URLs and sitemap, then remove the preview robots exclusion at the appropriate launch point. Confirm current lender identity, licensing and advertising disclosures with Patriot. Do not treat this historical document as fresh legal verification.
+8. Confirm whether contact links alone satisfy the requested launch or whether an approved calendar/CRM workflow is needed. Implement additional integrations only within the user’s confirmed scope. Launch completion means verified customer paths and domain behavior, not just a successful upload.
+
+## Contact and lender details already in source
+
+These are carried forward from the previous implementation; verify before public launch:
+
+- Erik Miller, NMLS #263103; 623-696-8683; erik.miller@patriothomemortgage.com.
+- Belem Servicing LLC, dba Patriot Home Mortgage; company NMLS #715386.
+- 17505 N 79th Ave, Ste 312, Glendale, AZ 85308.
+- Profile: https://patriothomemortgage.com/mortgage-officer/erik-miller/
+- Secure application: https://myloan.patriothomemortgage.com/homehub/signup/erik.miller@patriothomemortgage.com
+- Programs: https://patriothomemortgage.com/loan-options/
+
+## Publishing through Sites, if available in the next environment
+
+Preserve `.openai/hosting.json` and the existing project ID. Use a fresh Sites source credential through secure per-command authentication, never a token in a remote URL or committed file. Push exact source, package the static `dist/` output with hosting metadata, save a Sites version tied to the full pushed commit SHA, deploy to the authorized audience, and wait for terminal success. A Git push alone does not update the published website. Claude Code may need an explicitly configured Sites connector or an alternative authorized host.
+
+## Completion evidence so far
+
+The September 6 revision passed JavaScript syntax, whitespace checks, and 27 mocked check-in combinations. Its Sites deployment succeeded as version 4. No visual browser QA was performed. On September 7 the local implementation matched the fetched Sites main branch before adding this handoff. This task packages and pushes source/documentation; it does not mark the public launch complete.
