@@ -1,6 +1,8 @@
 # Boring Mortgage — Patriot Home Mortgage
 
-Start with [BORING-MORTGAGE-HANDOFF.md](BORING-MORTGAGE-HANDOFF.md) for Claude Code setup, current publication, architecture, and launch checklist.
+**Finishing the launch? Read [FINISH-LAUNCH.md](FINISH-LAUNCH.md) first.** It carries the current blocker, the exact steps left, and the open questions.
+
+For full history and QA evidence see [BORING-MORTGAGE-HANDOFF.md](BORING-MORTGAGE-HANDOFF.md) for Claude Code setup, current publication, architecture, and launch checklist.
 
 Portable static website. The editable source and publish directory is `dist/`. No dependency installation or build step.
 
