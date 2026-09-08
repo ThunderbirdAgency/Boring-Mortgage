@@ -54,10 +54,18 @@ Viewports 320, 390, 768, 1440, and 1920 px, plus a 720 px viewport as the 200% b
 - The Sites preview host (`boring-mortgage.thunderbird-8781.chatgpt.site`) serves `dist/_headers` as a plain file and applies none of the headers in it; it does serve `dist/404.html` for unknown paths, and it injects a Cloudflare challenge script into the HTML. It is not a suitable public host for the domain.
 - Account access found in this environment: a Vercel team “Thunderbird Agency” (Pro plan) where the other Thunderbird sites are GitHub-linked projects, and a Cloudflare account with Workers. No Vercel or Cloudflare project exists for Boring Mortgage yet, and no DNS tooling for the `boringmortgage.com` zone is available here, so who controls that zone (Erik’s Cloudflare account or GoHighLevel’s) is unverified.
 
+### Vercel project (created September 8, on Erik’s approval)
+
+- Project `boring-mortgage` in the Thunderbird Agency team, linked to the GitHub repository. Project id `prj_BeCo7CevM0zpmx6UvV6x3ccZ0Kst`. Production branch is currently `claude/boring-mortgage-handoff-46ejl5` (the only branch); every push to it redeploys production automatically. Change the production branch in Settings → Git if `main` is created later.
+- Production URL: https://boring-mortgage-thunderbird-agency.vercel.app (also `boring-mortgage.vercel.app`). The team default keeps Vercel Authentication on for `*.vercel.app` URLs, so they ask for a Vercel login; the custom domain will be public. A temporary share link valid until September 9, 2026 was given to Erik for phone review.
+- Verified on the deployment: all six routes 200, unique titles, `sitemap.xml`, `robots.txt`, `favicon.svg`, WebP assets with one-year immutable caching, all five security headers from `vercel.json` plus HSTS, and the branded 404 page with a real 404 status. The old-URL redirects are matched with and without a trailing slash because Vercel’s trailing-slash normalization runs before redirects.
+- No domain is attached yet. Adding `boringmortgage.com` and `www.boringmortgage.com` in Settings → Domains, then changing the GoDaddy records to the values Vercel shows (normally A `@` → `76.76.21.21`, CNAME `www` → `cname.vercel-dns.com`), completes the cutover. Rollback is restoring A `@` → `162.159.140.166` and CNAME `www` → `sites.ludicrous.cloud`.
+- Registrar and DNS host for boringmortgage.com: GoDaddy (nameservers `ns03/ns04.domaincontrol.com`). Nothing here has access to it.
+
 ### Launch blockers, in order
 
-1. **Host decision and project creation.** Recommended: a new Vercel project linked to the GitHub repository with output directory `dist` (the committed `vercel.json` already configures headers, redirects, and trailing slashes). Cloudflare Pages is the alternative and would use `_headers`/`_redirects`. Creating the project is a one-time setup step that has not been done; it was not authorized in this task.
-2. **DNS control for boringmortgage.com.** Someone must confirm where the zone is managed and be able to change the apex A/ALIAS and `www` CNAME. Until then no cutover is possible.
+1. **Host: done.** Vercel project created and verified (see above). Remaining host step: add the two domains in Vercel’s Domains settings.
+2. **DNS change at GoDaddy.** Erik (or whoever holds the GoDaddy login) changes the apex A record and the `www` CNAME to Vercel’s values. Until then the old GoHighLevel site keeps showing.
 3. **Robots and indexing.** After the host is verified on a preview URL, swap the `robots.txt` lines noted in the file and confirm `sitemap.xml` and canonicals resolve on the production domain.
 4. **Compliance confirmation with Patriot.** Lender identity, NMLS numbers, address, Equal Housing Lender language, and testimonial use in the footer and reviews section must be re-confirmed by Patriot before public launch. This repository carries them forward from the prior site and does not verify them.
 5. **Erik’s visual sign-off** on the current headline and layout (unchanged since version 4).
