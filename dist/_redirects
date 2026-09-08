@@ -1,0 +1,9 @@
+# Old BoringMortgage.com (LeadConnector) URLs -> new static routes.
+# Netlify / Cloudflare Pages format. Vercel uses vercel.json at the repo root instead.
+/home                 /           301
+/home-7750            /           301
+/conventional-loan    /#options   301
+/fha-loans            /#options   301
+/va-loans             /#options   301
+/double_checker       /double_checker/    301
+/schedule-a-call      /schedule-a-call/   301

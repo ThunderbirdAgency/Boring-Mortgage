@@ -1,12 +1,84 @@
 # Boring Mortgage — Claude Code handoff
 
-Updated September 7, 2026. This supersedes the earlier desktop handoff.
+Updated September 8, 2026. This supersedes the September 7 handoff. See “September 8 status” first.
 
 ## Start here
 
 Continue the existing Boring Mortgage website for Erik Miller / Patriot Home Mortgage. Preserve the navy/scarlet visual identity, exaggerated disaster illustrations, and deadpan humor. The premise is “exciting homes, uneventful financing.” Finish browser testing and remaining launch work from the existing implementation rather than rebuilding from scratch.
 
 The latest task was to push all work to Git and prepare this handoff. It did not authorize a new public-domain cutover. Verify current hosting and domain state before proposing a launch.
+
+## September 8 status: browser QA done, launch prep in place, no cutover
+
+Work continued in Claude Code on the web from the Git bundle. Every item below was verified in headless Chromium (Playwright 1.56) against a local `python3 -m http.server` serving `dist/`. Screenshots and the findings log are produced by `scripts/browser-qa.js` into `qa-output/` (ignored by Git).
+
+### GitHub destination, resolved
+
+- GitHub repository: https://github.com/ThunderbirdAgency/Boring-Mortgage (organization ThunderbirdAgency). It was empty before this session.
+- The full bundle history (`6cca47d` … `84c51d5`) was restored unchanged and pushed to branch `claude/boring-mortgage-handoff-46ejl5`, with this session’s commit on top. The source ZIP and the bundle were diffed against each other and matched exactly.
+- The Sites origin listed above is untouched and was not pushed to. `.openai/hosting.json` is preserved.
+
+### Browser QA results (September 8)
+
+Viewports 320, 390, 768, 1440, and 1920 px, plus a 720 px viewport as the 200% browser-zoom proxy and a 200% root font-size pass. All seven pages.
+
+- No horizontal overflow on any page at any width. No console errors, failed requests, or 4xx responses.
+- Check-in: native “Please select one of these options” bubble appears on empty submit and the step does not advance. Enter on a radio submits the step. Back keeps the selection. Tab order goes legend → radios → Continue. Arrow keys change the radio. Result panel shows the right copy and routes to `/buy/`, `/refinance/`, or `/double_checker/`; following the link loads the page. “Change my answers” returns to question 1 with all three answers still selected. Focus lands on the legend after each step change and on the result panel after submit; the result panel is inside the viewport at 390 and 1440.
+- Showcase: dots switch scenes and set `aria-pressed`/`aria-hidden`; picking a scene pauses; Play resumes and auto-advances after 6.5 s; ArrowLeft/ArrowRight work with focus inside the showcase; Space toggles the pause button; scrolling the showcase offscreen pauses the image drift and scrolling back resumes it; a hidden tab pauses and a visible tab resumes; `prefers-reduced-motion: reduce` stops the drift and sets the button to Play. Touch taps on the dots and the check-in radios work in mobile emulation.
+- Keyboard: skip link becomes visible at the top on focus. Tab order is skip → brand → nav → hero buttons → showcase controls → check-in.
+- 200% text-only enlargement scales the check-in panel (rem units) but not the rest of the site, which uses px sizes. Browser zoom (the common mechanism) reflows correctly at the 720 px proxy. Not changed; noted for a future pass if text-only scaling matters.
+- Under 900 px the nav collapses to the brand and “Talk to Erik” only; there is no menu button. Section anchors remain reachable by scrolling. Unchanged design decision, flagged for Erik.
+- Inline text links (footer legal links, “Meet Erik at Patriot” style links) are 14–22 px tall. Inline links are exempt from the 24 px target-size criterion; not changed.
+
+### Link and route audit
+
+- All internal routes, anchors (`/#approach`, `/#options`, `/#reviews`, `#check-in`, `#main`), phone links, and email links resolve. Every image loads (lazy images verified after scrolling).
+- External destinations return 200 with a browser user agent: Erik’s Patriot profile, Patriot loan options, the HomeHub secure application signup URL, Patriot privacy policy, Patriot licensing, CFPB owning-a-home, boringmortgage.com. NMLS Consumer Access returns 403 to non-browser clients (bot protection); it is a valid URL. No application was started or submitted.
+
+### Changes made September 8
+
+- **Image weight (was a launch blocker).** Homepage transferred 10.6 MB before scrolling at 390 px and 26 MB after a full scroll. It now transfers 494 KB and 626 KB respectively. Each illustration is served as WebP with JPEG fallback through `<picture>` and `srcset`: hero scenes at 900 and 1536 px wide, loan illustrations at 560 px, the yawning collage at 1000 and 1800 px, Erik’s byline portrait at 160 px. Variants were encoded with Chromium’s canvas encoder (WebP quality 0.80, JPEG 0.82) by `scripts/optimize-images.js`. Visual output matches the previous layout pixel-for-pixel in page dimensions at 390 and 1440. The full-resolution originals moved from `dist/assets/` to `source-assets/` so they stay tracked but are no longer published. `picture{display:contents}source{display:none}` keeps every existing image selector and grid placement working.
+- Removed the dead `.cinema`/`.film-caption` CSS from the retired video hero (no element used it); `calm-home.mp4` and `calm-poster.jpg` now live in `source-assets/`.
+- Unique `<title>` and meta description on every page (they were identical everywhere). 404 page carries `noindex`.
+- Canonical URLs on `https://boringmortgage.com/…`, Open Graph and Twitter card tags (image: tiger scene JPEG), `theme-color`, and an SVG favicon (`/favicon.svg`) that stops the previous 404 for `/favicon.ico` on every page load.
+- `dist/sitemap.xml` for the six public routes. `dist/robots.txt` still blocks all crawling; it now carries a comment with the exact lines to switch at launch.
+- `dist/_redirects` (Netlify / Cloudflare Pages format) and `vercel.json` (Vercel) map the live site’s old URLs to the new routes and, on Vercel, apply the same security headers as `dist/_headers` plus HSTS and long-lived asset caching. Neither is active on the Sites preview host.
+- `scripts/browser-qa.js` (repeatable Playwright QA) and `scripts/optimize-images.js` retained.
+- Copy, headline, layout, colors, illustrations, and humor are unchanged. Erik has still not given explicit visual approval of the current headline/layout.
+
+### Hosting and DNS findings (read-only audit, nothing changed)
+
+- `boringmortgage.com` resolves to a Cloudflare address (162.159.140.166) and `www.boringmortgage.com` is a CNAME to `sites.ludicrous.cloud`, which is the LeadConnector / GoHighLevel website host. The live HTML is a GoHighLevel funnel page (title “BoringMortgage.com”, `leadconnectorhq.com` and `filesafe.space` assets). This is the old site, not this repository.
+- Behavior today: HTTP → HTTPS 301, `www` → apex 301, valid TLS, apex is the canonical host. No security headers are sent. `/sitemap.xml` returns 200 but empty; `/robots.txt` is empty.
+- Old URLs that return 200 on the live site and need redirects at cutover: `/home-7750`, `/conventional-loan`, `/fha-loans`, `/va-loans`, `/double_checker`, `/schedule-a-call`. (`/home`, `/buy`, `/refinance` already 404 there.) The redirect files above cover these.
+- The Sites preview host (`boring-mortgage.thunderbird-8781.chatgpt.site`) serves `dist/_headers` as a plain file and applies none of the headers in it; it does serve `dist/404.html` for unknown paths, and it injects a Cloudflare challenge script into the HTML. It is not a suitable public host for the domain.
+- Account access found in this environment: a Vercel team “Thunderbird Agency” (Pro plan) where the other Thunderbird sites are GitHub-linked projects, and a Cloudflare account with Workers. No Vercel or Cloudflare project exists for Boring Mortgage yet, and no DNS tooling for the `boringmortgage.com` zone is available here, so who controls that zone (Erik’s Cloudflare account or GoHighLevel’s) is unverified.
+
+### Launch blockers, in order
+
+1. **Host decision and project creation.** Recommended: a new Vercel project linked to the GitHub repository with output directory `dist` (the committed `vercel.json` already configures headers, redirects, and trailing slashes). Cloudflare Pages is the alternative and would use `_headers`/`_redirects`. Creating the project is a one-time setup step that has not been done; it was not authorized in this task.
+2. **DNS control for boringmortgage.com.** Someone must confirm where the zone is managed and be able to change the apex A/ALIAS and `www` CNAME. Until then no cutover is possible.
+3. **Robots and indexing.** After the host is verified on a preview URL, swap the `robots.txt` lines noted in the file and confirm `sitemap.xml` and canonicals resolve on the production domain.
+4. **Compliance confirmation with Patriot.** Lender identity, NMLS numbers, address, Equal Housing Lender language, and testimonial use in the footer and reviews section must be re-confirmed by Patriot before public launch. This repository carries them forward from the prior site and does not verify them.
+5. **Erik’s visual sign-off** on the current headline and layout (unchanged since version 4).
+6. **Scope confirmation** that phone, email, and the Patriot secure application are sufficient conversion paths at launch. The old site links a `meetmequickly.com/hlt` booking page; this site has no booking calendar and no CRM by design.
+
+### Launch and rollback plan (proposed, not executed)
+
+1. Create the host project from the GitHub repository, branch `main` after this branch is merged; verify on the host’s preview URL: all six routes, `/404` handling, security headers present, redirects from the six old URLs, `/favicon.svg`, `/sitemap.xml`.
+2. Add `boringmortgage.com` and `www.boringmortgage.com` to the host; keep `www` → apex.
+3. Lower DNS TTL on the current records if it is high; note the current values (apex A 162.159.140.166, `www` CNAME `sites.ludicrous.cloud`) for rollback.
+4. Flip `robots.txt` to allow crawling with the sitemap line, commit, deploy.
+5. Switch DNS to the host’s records. Verify TLS issuance, HTTP → HTTPS, `www` → apex, old-URL redirects, and the phone, email, and application links on the live domain from a phone.
+6. Rollback: restore the two DNS records noted in step 3; the GoHighLevel site remains published there and needs no rebuild. Keep the GoHighLevel site untouched until at least one week after cutover.
+
+### Commands
+
+```sh
+python3 -m http.server 8765 --bind 127.0.0.1 --directory dist   # serve
+node --check dist/motion.js && node scripts/check-flow.cjs && git diff --check
+NODE_PATH=$(npm root -g) node scripts/browser-qa.js               # full browser QA → qa-output/
+```
 
 ## Open in Claude Code
 
@@ -73,7 +145,9 @@ The old section displayed all questions in a long white form beside a mostly emp
 | `dist/index.html` | Homepage, disaster showcase, check-in, programs, testimonials, FAQ, disclosures |
 | `dist/style.css` | Shared CSS and campaign layers; compact check-in block near the end |
 | `dist/motion.js` | Disaster showcase controller, then check-in controller |
-| `dist/assets/` | All images, original assets, and retained unused grass video |
+| `dist/assets/` | Published images only: WebP + JPEG/PNG variants and `patriot.svg` |
+| `source-assets/` | Full-resolution originals and the retired hero video; tracked, not published |
+| `dist/favicon.svg`, `dist/sitemap.xml`, `dist/_redirects`, `vercel.json` | Added September 8; see status section |
 | `dist/buy/index.html` | Buying page |
 | `dist/refinance/index.html` | Mortgage review/refinance page |
 | `dist/double_checker/index.html` | Second-opinion page |
@@ -84,6 +158,8 @@ The old section displayed all questions in a long white form beside a mostly emp
 | `dist/robots.txt` | Preview indexing exclusion: Disallow: / |
 | `.openai/hosting.json` | Existing Sites identity and static directory |
 | `scripts/check-flow.cjs` | Repeatable check-in logic regression checks |
+| `scripts/browser-qa.js` | Playwright browser QA: viewports, overflow, check-in flow, showcase, keyboard, touch, links |
+| `scripts/optimize-images.js` | Regenerates the optimized image variants from `source-assets/` |
 | `ASSET-SOURCES.md` | Asset provenance |
 
 Much of the original HTML/CSS/JavaScript is compressed into long lines. Reformat carefully before larger edits if helpful; preserve behavior and verify the result. Do not delete `dist/` or run a scaffold over this project.
