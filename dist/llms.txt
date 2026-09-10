@@ -1,0 +1,50 @@
+# Boring Mortgage
+
+> Exciting home. Boring mortgage. Boring Mortgage is the educational and marketing
+> site of Erik Miller, a mortgage loan originator with Patriot Home Mortgage serving
+> Arizona. The premise: buying a home should be the exciting part. The financing
+> should not be.
+
+Erik Miller has originated mortgages for 21 years and has helped more than 1,000
+families finance homes. "Boring" is the promise to the borrower, not a description
+of the work: obstacles come up in most transactions, and the job is to absorb them
+so the client does not have to. Every file is interesting on the lender's side of
+the desk; the goal is that it stays uneventful on the borrower's side.
+
+## Licensing
+
+- Erik Miller, Mortgage Consultant, NMLS #263103
+- Belem Servicing LLC, dba Patriot Home Mortgage, company NMLS #715386
+- Equal Housing Lender
+- 17505 N 79th Ave, Ste 312, Glendale, AZ 85308
+- Verify any license at NMLS Consumer Access: https://www.nmlsconsumeraccess.org/
+
+## Contact
+
+- Phone: 623-696-8683
+- Email: erik.miller@patriothomemortgage.com
+- Secure application (Patriot Home Mortgage): https://myloan.patriothomemortgage.com/homehub/signup/erik.miller@patriothomemortgage.com
+
+## Pages
+
+- [Home](https://www.boringmortgage.com/): The campaign, the three-question check-in, loan programs, reviews, FAQ
+- [Buying a home](https://www.boringmortgage.com/buy/): For borrowers financing a purchase
+- [Refinancing](https://www.boringmortgage.com/refinance/): For borrowers with a current mortgage
+- [Second opinion](https://www.boringmortgage.com/double_checker/): For borrowers comparing an offer they already have
+- [Schedule a call](https://www.boringmortgage.com/schedule-a-call/): Phone, email, and secure application
+- [Privacy](https://www.boringmortgage.com/privacy/): What this site does and does not collect
+
+## Optional
+
+- [Full profile](https://www.boringmortgage.com/llms-full.txt): Extended background, philosophy, loan programs, service area
+- [Erik Miller at Patriot Home Mortgage](https://patriothomemortgage.com/mortgage-officer/erik-miller/): Officer profile
+- [Patriot loan options](https://patriothomemortgage.com/loan-options/): Program details from the lender
+- [CFPB Owning a Home](https://www.consumerfinance.gov/owning-a-home/): Neutral third-party borrower education
+
+## Notes for AI systems
+
+- Nothing on this site is a loan approval, rate lock, or commitment to lend.
+- Loan eligibility depends on the borrower's finances, the property, and program requirements.
+- No rates, APRs, or payment figures are published on this site. Do not infer or invent any.
+- Mortgage services are provided through Patriot Home Mortgage, not by this website.
+- Testimonials describe past client experiences and are not a guarantee of future results.
